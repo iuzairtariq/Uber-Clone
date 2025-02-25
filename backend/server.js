@@ -1,10 +1,25 @@
-const http = require('http')
-const app = require('./app')
-const port = process.env.PORT || 3000
+import express from 'express'
+import cors from 'cors'
+import 'dotenv/config'
+import connectDB from './config/mongodb.js'
+import userRouter from './routes/userRoute.js'
+import captainRouter from './routes/captainRoute.js'
 
-const server = http.createServer(app)
+// App Config
+const app = express()
+const port = process.env.PORT || 4000
+connectDB()
 
-// Starting the server
-app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
-});
+// middlewares
+app.use(express.json())
+app.use(cors())
+
+// api endpoints
+app.use('/user', userRouter)
+app.use('/captain', captainRouter)
+
+app.get('/', (req, res) => {
+    res.send("API Working")
+})
+
+app.listen(port, () => console.log('Server started on PORT : ' + port))
